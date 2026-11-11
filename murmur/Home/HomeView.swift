@@ -132,7 +132,8 @@ private struct HandwrittenTitle: View {
     }
 }
 
-private struct TimerRow: View {
+/// Elapsed time since `startedAt` in the `timer` style. Also used on the Day screen.
+struct TimerRow: View {
     let startedAt: Date
 
     var body: some View {

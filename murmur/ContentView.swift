@@ -8,8 +8,22 @@ struct ContentView: View {
     @State private var dragOffset: CGFloat = 0
     /// Decided on the first movement of each drag so vertical drags never swipe.
     @State private var dragIsHorizontal: Bool?
+    /// Days pushed from the Calendar.
+    @State private var dayPath: [Date] = []
+    @State private var transcriptions = TranscriptionQueue()
 
     var body: some View {
+        NavigationStack(path: $dayPath) {
+            pages
+                .toolbar(.hidden, for: .navigationBar)
+                .navigationDestination(for: Date.self) { day in
+                    DayPager(day: day)
+                }
+        }
+        .environment(transcriptions)
+    }
+
+    private var pages: some View {
         GeometryReader { geo in
             let width = geo.size.width
             let progress = Self.progress(page: page, dragOffset: dragOffset, width: width)
@@ -17,7 +31,7 @@ struct ContentView: View {
             ZStack(alignment: .bottom) {
                 HStack(spacing: 0) {
                     HomeView().frame(width: width)
-                    CalendarView().frame(width: width)
+                    CalendarView(onSelectDay: { dayPath.append($0) }).frame(width: width)
                 }
                 .frame(width: width, alignment: .leading)
                 .offset(x: -CGFloat(page.rawValue) * width + dragOffset)

@@ -189,16 +189,54 @@ A horizontal paging `ScrollView` with a scroll position binding, or a `DragGestu
 
 ### Day
 
-Designed but less settled than the other two; build it last and keep it simple.
+Pushed from the Calendar when a day with recordings is tapped. Swipe back, or the back control, returns to the Calendar. Swipe left and right to move between days that have recordings (earlier days to the left). Side padding 28pt; anchored to the top safe area.
 
-- Back control top left: a hand-drawn left arrow and "november", returning to the Calendar.
-- Date as a two-line handwritten title: "tuesday," / "november 10" (Gaegu Bold 46).
-- A caption line: "2 recordings · 6 min 41 sec".
-- Squiggle divider.
-- If the day has more than one recording, a row of pill buttons, one per recording, labelled with time and length ("8:12 am · 4:02"). Pills have a 1.5pt ink outline; the selected one is filled ink with white text.
-- A short handwritten title for the selected recording (Gaegu Regular 28).
-- Player: a play/pause button drawn as a hand-drawn circle with a triangle or two bars, then a waveform of thin vertical bars (played part ink, the rest light grey #C9C9C9), with elapsed and total time under it in 12pt inkMuted.
-- "TRANSCRIPT" label (11pt Medium, letter spaced, inkMuted), then the transcript as timestamped paragraphs (15pt, line height 1.55). The paragraph currently being spoken is ink; the others are inkMuted.
+1. **Back control**, level with Home's date line (arrow 29pt below the top safe area, 76pt from the top of the design frame): hand-drawn left arrow only, no text. 44pt square hit area. Accessibility label "Back to calendar".
+2. **Title**, 14pt below: Gaegu Bold 46, line height 0.98, lowercase, two lines: "tuesday," / "november 10". No summary line.
+   - To its right, at the right margin and bottom-aligned with it: one 84pt drawing from the asset catalog (armchair, bed, blanket, book, bowl, candle, cat, mug, plant, socks, sprig, window-sun, window-sunrise), chosen by the day's ordinal in the year modulo 13, so a day always shows the same one. Black line art, never tinted.
+3. **Timeline**, 28pt below the title, in a vertical scroll view.
+
+**Timeline.** One wobbly vertical ink line, 1.8pt, round caps, through the centre of the play buttons (50pt from the left edge), starting just below the top of the first play button. One row per recording, oldest first, 26pt apart:
+
+- Left: a 44pt play button, the hand-drawn circle with a play triangle (pause bars while playing), filled white so it covers the line.
+- Right, 16pt gap: time and length in Inter 13 Regular, inkMuted, monospaced digits ("8:12 am · 4:02"); 4pt below, the title in Gaegu Bold 28, lowercase.
+
+**Progressive disclosure.**
+
+- At rest a row shows only the play button, the time line and the title.
+- Tapping the title area expands the row: a waveform (40 bars, 2pt wide, 40pt tall row, played bars ink, the rest #C9C9C9) 10pt below the title; elapsed time left and total right under it (Inter 12, inkMuted); then a "show transcript" text button (Inter 13 Medium, ink, small hand-drawn chevron, 44pt tall). Tapping the title again collapses it.
+- Play on a collapsed row expands it and starts playing. Play on the open row toggles play and pause. At the end, play restarts from 0.
+- Only one row is open at a time. Collapsing or switching rows stops playback.
+- "show transcript" reveals the transcript and becomes "hide transcript" with the chevron rotated 180 degrees. Each segment: timestamp (Inter 12, inkMuted, 28pt column) and text (Inter 14, line height 1.55), 12pt apart. The segment being spoken is ink, the others inkMuted.
+- The transcript is always hidden when the screen opens. It is not remembered.
+
+**Adding a recording (today only).** If the day is today, the line continues 26pt past the last row to a record button: the same 44pt hand-drawn circle with a 26pt red disc inside, no label, accessibility label "Record another for today". Tap to record in place: the disc shows a 9pt white rounded square, and to the right "i'm listening…" (Gaegu Regular 24) with the elapsed time under it (`timer` style). Tap again to stop: the recording is saved and added as a new row above the record button, and transcribed in the background; until that finishes its transcript reads "writing out what you said…". On past days there is no record button and the line ends at the last play button.
+
+**Titles.** `Recording.title`; if empty, the first five words of the transcript in lowercase; before there is a transcript, "new recording".
+
+**Waveform.** 40 levels computed from the audio file's samples.
+
+**Accessibility.** Play buttons read "Play <title>" or "Pause <title>". The title area and the transcript button expose their expanded state.
+
+**Details settled in the build.** Values the brief did not give:
+
+- Each play button is centred on its row's time and title, and stays there when the row expands.
+- 6pt between the waveform and the elapsed/total times; 4pt above the transcript button and above the transcript; 8pt between a timestamp and its text.
+- Silent waveform bars still show as 2pt dots. Play and pause lines are 2pt; the record button's stop square has a 2.5pt corner radius; 2pt between "i'm listening…" and the timer.
+- The 0.98 title line height is a fixed 45pt box per line; glyphs may spill past it.
+- Transcripts are split into passages at the end of each sentence or after a pause longer than 1.2 seconds.
+- "show transcript" appears only when there is a transcript or one is being written.
+- Starting a recording pauses playback; play buttons are disabled while recording.
+- Moving to another day stops playback, and stops and saves a recording in progress.
+
+| Name | View box | Path | Drawn at |
+| --- | --- | --- | --- |
+| Circle | 44 x 44 | `M22 3 C33 2 41 10 41 21 C41 33 33 41 22 41 C10 41 3 33 3 22 C3 11 11 3 25 4` | 44 x 44, stroke 2 |
+| Play | 44 x 44 | `M18 14 L31 22 L18 30 C17 25 17 19 18 14` | 44 x 44, stroke 2 |
+| Pause (2 paths) | 44 x 44 | `M17 15 L17 29` / `M27 15 L27 29` | 44 x 44, stroke 2 |
+| Back arrow (2 paths) | 24 x 24 | `M21 12 C15 11 10 13 4 12` / `M10 6 C8 8 6 10 4 12 C6 14 8 16 10 19` | 24 x 24, stroke 2 |
+| Chevron down | 24 x 24 | `M5 9 C7 12 10 14 12 16 C14 14 17 11 19 9` | 16 x 16, stroke 1.8 |
+| Timeline line | 8 wide | `M4 0 C7 75 1 150 4 225`, repeated every 225pt | Not scaled, stroke 1.8 |
 
 ## 7. Rules that keep it on style
 

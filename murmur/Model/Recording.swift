@@ -28,6 +28,22 @@ import SwiftData
     var fileURL: URL {
         URL.documentsDirectory.appending(path: fileName)
     }
+
+    /// The title, else the first five words of the transcript, else "new recording".
+    /// Always lowercase, since it is written by hand.
+    var displayTitle: String {
+        if let title = title?.trimmingCharacters(in: .whitespacesAndNewlines), !title.isEmpty {
+            return title.lowercased()
+        }
+        let words = segments
+            .map(\.text)
+            .joined(separator: " ")
+            .split(whereSeparator: \.isWhitespace)
+            .prefix(5)
+        let start = words.joined(separator: " ")
+            .trimmingCharacters(in: .punctuationCharacters.union(.whitespaces))
+        return start.isEmpty ? "new recording" : start.lowercased()
+    }
 }
 
 struct TranscriptSegment: Codable, Hashable {

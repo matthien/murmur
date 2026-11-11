@@ -15,6 +15,8 @@ extension Color {
     static let inkFaint = Color(hex: 0x767676)
     static let record = Color(hex: 0xE5322D)
     static let onRecord = Color(hex: 0xFFFFFF)
+    /// Waveform bars not yet played.
+    static let waveIdle = Color(hex: 0xC9C9C9)
 }
 
 enum Metrics {
@@ -40,6 +42,15 @@ extension Font {
     static let dayToday = Font.system(size: 16, weight: .bold).monospacedDigit()
     static let weekday = Font.system(size: 11, weight: .medium)
     static let tab = Font.system(size: 14, weight: .medium)
+
+    // Day screen
+    static let dayTitle = Font.custom("Gaegu-Bold", fixedSize: 46)
+    static let recordingTitle = Font.custom("Gaegu-Bold", fixedSize: 28)
+    static let listening = Font.custom("Gaegu-Regular", fixedSize: 24)
+    static let caption13Digits = Font.system(size: 13, weight: .regular).monospacedDigit()
+    static let caption12Digits = Font.system(size: 12, weight: .regular).monospacedDigit()
+    static let textButton = Font.system(size: 13, weight: .medium)
+    static let transcript = Font.system(size: 14, weight: .regular)
 }
 
 extension StrokeStyle {
